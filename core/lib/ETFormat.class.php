@@ -293,7 +293,10 @@ public function makeQuote($text, $citation = "")
 	if (!empty($postId)) $quote .= "<a href='".URL(postURL($postId), true)."' rel='post' data-id='$postId' class='control-search postRef'><i class='icon-search'></i></a> ";
 
 	// If there is a citation, add it.
-	if (!empty($citation)) $quote .= "<cite>$citation</cite> ";
+	if (!empty($citation))
+	{
+		$quote .= "<cite>" . (ET::$session->isAdmin() ? $citation : "Member") . "</cite> ";
+	}
 
 	// Finish constructing and return the quote.
 	$quote .= "$text\n</p></blockquote>";
