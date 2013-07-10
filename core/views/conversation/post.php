@@ -11,6 +11,20 @@ if (!defined("IN_ESOTALK")) exit;
  */
 
 $post = $data["post"];
+
+$tmp_posterIsAdmin = false;
+		
+if (!empty($post["info"]))
+{
+	foreach ((array)$post["info"] as $info)
+	{
+		if (strpos($info, 'Administrator') !== FALSE)
+		{
+			$tmp_posterIsAdmin = true;
+			break;
+		}
+	}
+}
 ?>
 
 <div class='post hasControls <?php echo implode(" ", (array)$post["class"]); ?>' id='<?php echo $post["id"]; ?>'<?php
@@ -20,15 +34,46 @@ foreach ((array)$post["data"] as $dk => $dv)
 endif; ?>>
 
 <?php if (!empty($post["avatar"])): ?>
-<div class='avatar'<?php if (!empty($post["hideAvatar"])): ?> style='display:none'<?php endif; ?>><?php echo $post["avatar"]; ?></div>
+<div class='avatar'<?php if (!empty($post["hideAvatar"])): ?> style='display:none'<?php endif; ?>>
+<?php 
+	if (ET::$session->isAdmin() or $tmp_posterIsAdmin)
+	{
+		echo $post["avatar"]; 
+	}
+	else
+	{
+		echo '<img src="/esoTalk/core/skin/avatar.png" alt="" class="avatar ">';
+	}
+?>
+</div>
 <?php endif; ?>
 
 <div class='postContent thing'>
 
 <div class='postHeader'>
 <div class='info'>
-<h3><?php echo $post["title"]; ?></h3>
-<?php if (!empty($post["info"])) foreach ((array)$post["info"] as $info) echo $info, "\n"; ?>
+<h3>
+	<?php 
+		if (ET::$session->isAdmin() or $tmp_posterIsAdmin)
+		{
+			echo $post["title"]; 
+		}
+		else
+		{
+			echo "Member";
+		}
+		
+	?>
+</h3>
+<?php 
+	if (!empty($post["info"]))
+	{
+		foreach ((array)$post["info"] as $info)
+		{
+			echo $info, "\n"; 
+		}
+	}
+?>
 </div>
 <div class='controls'>
 <?php if (!empty($post["controls"])) foreach ((array)$post["controls"] as $control) echo $control, "\n"; ?>

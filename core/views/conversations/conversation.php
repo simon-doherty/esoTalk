@@ -57,14 +57,25 @@ if (ET::$session->user and $conversation["unread"])
 	echo " <a href='".URL("conversation/markAsRead/".$conversation["conversationId"]."?token=".ET::$session->token."&return=".urlencode(ET::$controller->selfURL))."' class='unreadIndicator' title='".T("Mark as read")."'>".$conversation["unread"]." new</a> ";
 
 ?></div>
-<div class='col-lastPost'><?php
+<div class='col-lastPost'>
+<?php
+
+if (ET::$session->isAdmin())
+{
+	$conversationLink = "<span class='lastPostMember name'>".memberLink($conversation["lastPostMemberId"], $conversation["lastPostMember"])."</span>";
+}
+else
+{
+	$conversationLink = "Member";
+}
+
 echo "<span class='action'>".avatar(array(
 		"memberId" => $conversation["lastPostMemberId"],
 		"avatarFormat" => $conversation["lastPostMemberAvatarFormat"],
 		"email" => $conversation["lastPostMemberEmail"]
 	), "thumb"), " ",
 	sprintf(T("%s posted %s"),
-		"<span class='lastPostMember name'>".memberLink($conversation["lastPostMemberId"], $conversation["lastPostMember"])."</span>",
+		$conversationLink,
 		"<a href='".URL($conversationURL."/unread")."' class='lastPostTime'>".relativeTime($conversation["lastPostTime"], true)."</a>"),
 	"</span>";
 ?></div>
