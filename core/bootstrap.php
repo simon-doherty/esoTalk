@@ -91,7 +91,35 @@ if (C("esoTalk.https") and (!array_key_exists("HTTPS", $_SERVER) or $_SERVER["HT
     exit;
 }
 
+if (!isset($_COOKIE[session_name()]))
+{
+	session_name(C("esoTalk.cookie.name"));
+	session_start();
 
+	if (!isset($_SESSION['userId']))
+	{
+		if ($_SESSION['userId'] != 1)
+		{
+			if (isset($_COOKIE['PSLive'])) 
+			{
+			
+				// Create connection
+				$con=mysqli_connect(C("esoTalk.database.host"), C("esoTalk.database.user"), C("esoTalk.database.password"), C("esoTalk.database.dbName"));
+
+				// Check connection
+				if (!mysqli_connect_errno($con))
+				{
+					$result = mysqli_query($con,'SELECT memberId FROM et_member WHERE memberId = "' . $_COOKIE['PSLive'] . '"');
+					while($row = mysqli_fetch_array($result))
+					{
+						$_SESSION['userId'] = $row['memberId'];
+					}  
+				}
+				mysqli_close($con);		
+			}
+		}
+	}
+}
 
 //***** 3. REQUIRE AND REGISTER ESSENTIAL CLASSES
 
